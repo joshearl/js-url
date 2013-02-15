@@ -1,16 +1,17 @@
 /******************************************
- * Websanova.com
- *
- * Resources for web entrepreneurs
- *
- * @author          Websanova
- * @copyright       Copyright (c) 2012 Websanova.
+ * 
+ * @author          Josh Earl 
+ * @copyright       Copyright (c) 2012 Josh Earl.
  * @license         This websanova JavaScript url is dual licensed under the MIT and GPL licenses.
- * @link            http://www.websanova.com
- * @github          http://github.com/websanova/js-url
- * @version			1.7.5
+ * @link            http://joshearl.me
+ * @github          http://github.com/joshearl/js-url
+ * @version					1.7.6
  *
  ******************************************/
+
+/***************************************************************************
+ * Customized fork of https://github.com/websanova/js-url to work with IE7 *
+ ***************************************************************************/
 
 window.url = (function() {
 	function isNumeric(arg) {
@@ -34,6 +35,9 @@ window.url = (function() {
 		if(_p.split('.').length === 1 && _p[_p.length-1] !== '/') _p += '/';
 		var _h = _l.hostname, _hs = _h.split('.'), _ps = _p.split('/');
 
+		// modified for IE7
+		var chars = (arg && arg.split) ? arg.split('') : [];
+
 		if(!arg) return _ls;
 		else if(arg === 'hostname') return _h;
 		else if(arg === 'domain') return _hs.slice(-2).join('.');
@@ -45,23 +49,26 @@ window.url = (function() {
 		else if(arg === 'user') return _l.auth.split(':')[0];
 		else if(arg === 'pass') return _l.auth.split(':')[1] || '';
 		else if(arg === 'path') return _p;
-		else if(arg[0] === '.')
+		else if(chars[0] === '.')
 		{
 			arg = arg.substring(1);
 			if(isNumeric(arg)) {arg = parseInt(arg); return _hs[arg < 0 ? _hs.length + arg : arg-1] || ''; }
 		}
-		else if(isNumeric(arg)){ arg = parseInt(arg); return _ps[arg < 0 ? _ps.length - 1 + arg : arg] || ''; }
+		else if(isNumeric(arg)){ 
+			arg = parseInt(arg); 
+			return _ps[arg < 0 ? _ps.length - 1 + arg : arg] || ''; 
+		}
 		else if(arg === 'file') return _ps.slice(-1)[0];
 		else if(arg === 'filename') return _ps.slice(-1)[0].split('.')[0];
-		else if(arg === 'fileext') return _ps.slice(-1)[0].split('.')[1] || '';
-		else if(arg[0] === '?' || arg[0] === '#')
+		else if (arg === 'fileext') return _ps.slice(-1)[0].split('.')[1] || '';
+		else if(chars[0] === '?' || chars[0] === '#')
 		{
 			var params = _ls, param = null;
 
-			if(arg[0] === '?') params = (params.split('?')[1] || '').split('#')[0];
-			else if(arg[0] === '#') params = (params.split('#')[1] || '');
+			if(chars[0] === '?') params = (params.split('?')[1] || '').split('#')[0];
+			else if(chars[0] === '#') params = (params.split('#')[1] || '');
 
-			if(!arg[1]) return params;
+			if(!chars[1]) return params;
 
 			arg = arg.substring(1);
 			params = params.split('&');
